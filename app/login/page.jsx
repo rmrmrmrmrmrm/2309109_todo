@@ -55,7 +55,7 @@ const Login = () => {
               id="email"
               name="email"
               type="email"
-              placeholder="ドメイン正しくないとエラー"
+              placeholder="email"
               autoComplete="email"
               bg={"green.50"}
             />
@@ -68,7 +68,7 @@ const Login = () => {
               id="password"
               name="password"
               type="password"
-              placeholder="6文字以上でないとエラー"
+              placeholder="password"
               autoComplete="password"
               bg={"green.50"}
             />

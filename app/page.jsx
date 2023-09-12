@@ -1,6 +1,6 @@
 "use client";
 
-const Home = ({ children }) => {
+const Home = () => {
   return <></>;
 };
 

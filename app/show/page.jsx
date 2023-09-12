@@ -1,8 +1,8 @@
 "use client";
 
 import { EditIcon } from '@chakra-ui/icons'
-
-import {Box,Button,Flex,Text,Heading,Spacer,} from '@chakra-ui/react'
+import {Box,Button,Flex,Text,Heading,Spacer} from '@chakra-ui/react'
+import { BackButton } from "../components/button/BackButton"
 
 const Show = () => {
   return (
@@ -22,15 +22,13 @@ const Show = () => {
 
       {/* コンテンツ */}
       <Box m='0 auto' maxW='1080px'>{/* コンテンツ部分の最大幅と横の余白 */}
-      
+
         {/* CommentボタンとBackボタン */}
         <Flex mb='20px' justify="end">
           <Button mr='20px' w='90px' bgColor="green.700" rounded="full" color='white' textAlign="center" border='1px' borderColor='black'>
             Comment
           </Button>
-          <Button w='90px' bgColor="green.300" rounded="full" textAlign="center" border='1px' borderColor='black'>
-            Back
-          </Button>
+          <BackButton />
         </Flex>
 
         {/* Todoリスト部分 */}

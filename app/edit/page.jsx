@@ -1,6 +1,7 @@
 'use client'
 
 import { Heading, Box, Button, Text, Input, Flex, Textarea } from "@chakra-ui/react";
+import { BackButton } from "../components/button/BackButton"
 
 export default function Edit() {
   return(
@@ -17,11 +18,9 @@ export default function Edit() {
       <Box border={5} p={20} pt={5}>
 
       {/* Backボタン */}
-        <Flex justify="end">
-          <Button px={8} background={"green.300"} border='1px' borderColor='green.600' rounded="full">
-            Back
-          </Button>
-        </Flex>
+      <Flex justify="end">
+       <BackButton />
+      </Flex>
       {/* Backボタン */}
 
       {/* TODOのタイトル設定 */}

@@ -42,13 +42,6 @@ export const Header = () => {
           LOGOUT
         </Button>
       )}
-      <span>テスト用メニュー｜</span>
-      <Link href="/login">login｜</Link>
-      <Link href="/signup">signup｜</Link>
-      <Link href="/top">top｜</Link>
-      <Link href="/show">show｜</Link>
-      <Link href="/create">create｜</Link>
-      <Link href="/edit">edit｜</Link>
     </Flex>
   );
 };

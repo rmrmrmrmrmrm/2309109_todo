@@ -13,9 +13,7 @@ export function Providers({ children }) {
         <ChakraProvider>
           <AuthProvider>
             <Header />
-            <PrivateRoute allowedRouters={["/login", "/signup"]}>
-              {children}
-            </PrivateRoute>
+            <PrivateRoute>{children}</PrivateRoute>
           </AuthProvider>
         </ChakraProvider>
       </CacheProvider>

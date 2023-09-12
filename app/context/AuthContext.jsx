@@ -1,6 +1,7 @@
 import { auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-const { createContext, useContext, useState, useEffect } = require("react");
+import { createContext, useContext, useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 const AuthContext = createContext();
 
@@ -9,29 +10,31 @@ export function useAuthContext() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [loading, setLoading] = useState(true);
 
   const value = {
     user,
+    loading,
   };
 
   useEffect(() => {
     const unsubscribed = onAuthStateChanged(auth, (user) => {
       console.log(user);
       setUser(user);
-      if (user) {
-        console.log("ログイン中");
-      } else {
-        console.log("ログアウト中");
+      setLoading(false);
+      if (!user) {
+        if (pathname !== "/login" && pathname !== "/signup") {
+          router.push("/login");
+        }
       }
     });
     return () => {
       unsubscribed();
     };
-  }, []);
-  return (
-    <>
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    </>
-  );
+  }, [pathname]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
