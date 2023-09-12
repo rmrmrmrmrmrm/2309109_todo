@@ -1,7 +1,7 @@
 "use client";
 
 const Home = () => {
-  return <></>;
+  return <>git削除テスト</>;
 };
 
 export default Home;
