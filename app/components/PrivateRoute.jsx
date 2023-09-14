@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -6,15 +7,14 @@ const PrivateRoute = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (!user) {
-    if (pathname !== "/login" && pathname !== "/signup") {
-      router.push("/login");
-    } else {
-      return <>{children}</>;
+  useEffect(() => {
+    if (!user) {
+      if (pathname !== "/login" && pathname !== "/signup") {
+        router.push("/login");
+      }
     }
-  } else {
-    return <>{children}</>;
-  }
+  }, [pathname]);
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
