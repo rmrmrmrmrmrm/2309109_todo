@@ -8,12 +8,13 @@ const PrivateRoute = ({ children }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!user) {
-      if (pathname !== "/login" && pathname !== "/signup") {
-        router.push("/login");
-      }
+    if (!user && pathname !== "/login" && pathname !== "/signup") {
+      router.push("/login");
     }
   }, [pathname]);
+  if (!user && pathname !== "/login" && pathname !== "/signup") {
+    return null;
+  }
   return <>{children}</>;
 };
 
