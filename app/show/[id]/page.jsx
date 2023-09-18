@@ -34,12 +34,16 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 const Show = () => {
+  // id
   const pathname = usePathname();
   const segments = pathname.split("/");
   const id = segments[segments.length - 1];
+  // State
+  const [todos, setTodos] = useState([]);
+  const [comments, setComments] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Todoリスト
-  const [todos, setTodos] = useState([]);
   const postsCol = collection(db, "posts");
   const queryRef = query(postsCol, where("Id", "==", id));
   (async () => {
@@ -48,14 +52,8 @@ const Show = () => {
       const todoDocObj = querySnapshot.docs[0];
       if (todoDocObj) {
         const data = todoDocObj.data();
-        const formattedCreate = format(
-          data.Create.toDate(),
-          "yyyy-MM-dd HH:mm"
-        );
-        const formattedUpdate = format(
-          data.Update.toDate(),
-          "yyyy-MM-dd HH:mm"
-        );
+        const formattedCreate = format(data.Create.toDate(), "yyyy-MM-dd HH:mm");
+        const formattedUpdate = format(data.Update.toDate(), "yyyy-MM-dd HH:mm");
         setTodos({
           Create: formattedCreate,
           Detail: data.Detail,
@@ -69,24 +67,16 @@ const Show = () => {
   })();
 
   // コメント表示
-  const [comments, setComments] = useState([]);
   const fetchComment = async () => {
     try {
       const cmtCol = collection(db, "comments");
-      const cmtQueryRef = query(
-        cmtCol,
-        where("Id", "==", id),
-        orderBy("commentCreate", "desc")
-      );
+      const cmtQueryRef = query(cmtCol, where("Id", "==", id), orderBy("commentCreate", "desc"));
       getDocs(cmtQueryRef).then((cmtSnapShot) => {
         const cmtObj = cmtSnapShot.docs.map((doc) => {
           return {
             commentName: doc.data().commentName,
             commentDetail: doc.data().commentDetail,
-            commentCreate: format(
-              doc.data().commentCreate.toDate(),
-              "yyyy-MM-dd HH:mm"
-            ),
+            commentCreate: format(doc.data().commentCreate.toDate(), "yyyy-MM-dd HH:mm"),
           };
         });
         setComments(cmtObj);
@@ -114,15 +104,13 @@ const Show = () => {
         commentId: newComment.id,
         commentName: comname,
       });
-      commentName.value = "";
-      commentDetail.value = "";
+      e.target.reset();
       onClose();
+      fetchComment();
     } catch (error) {
-      console.log("コメント登録失敗" + error);
+      // console.log(error);
     }
   };
-  // モーダル
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
@@ -150,14 +138,7 @@ const Show = () => {
         <Flex>
           {/* Todoリスト部分 */}
           <Flex>
-            <Box
-              w="55%"
-              border="1px"
-              borderColor="gray"
-              p={2}
-              mr="20px"
-              borderRadius="10px"
-            >
+            <Box w="55%" border="1px" borderColor="gray" p={2} mr="20px" borderRadius="10px">
               <Box bg="#68D391">
                 <Text as="b">TITLE</Text>
               </Box>
