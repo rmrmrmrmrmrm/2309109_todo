@@ -15,6 +15,7 @@ import {
   FormControl,
   FormLabel,
   Center,
+  Spacer,
 } from "@chakra-ui/react";
 import { BackButton } from "../../components/button/BackButton";
 import { usePathname } from "next/navigation";
@@ -26,34 +27,27 @@ import {
   query,
   where,
   Timestamp,
+  orderBy,
 } from "firebase/firestore";
 import db from "../../../firebase";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-// import { useForm } from "react-hook-form";
 
 const Show = () => {
-  // useRouterを使用して現在いるページのidを取得する
   const pathname = usePathname();
   const segments = pathname.split("/");
   const id = segments[segments.length - 1];
-  // todo詳細の表示
+
+  // Todoリスト
   const [todos, setTodos] = useState([]);
-  // firebaseからpostsコレクションをを取得
   const postsCol = collection(db, "posts");
-  // Firestoreのクエリ where を使用して条件を指定
   const queryRef = query(postsCol, where("Id", "==", id));
   (async () => {
     try {
-      // getDocs 関数を使用してデータを取得
-      // getDocs関数の前に await を追加し、データの取得を非同期で待ってから次の行を実行する
       const querySnapshot = await getDocs(queryRef);
       const todoDocObj = querySnapshot.docs[0];
       if (todoDocObj) {
         const data = todoDocObj.data();
-        // データを使用して何かを行う
-        // console.log(data);
-        // toDate()を使用してFirebaseのTimestampをDateオブジェクトに変換
         const formattedCreate = format(
           data.Create.toDate(),
           "yyyy-MM-dd HH:mm"
@@ -70,11 +64,40 @@ const Show = () => {
         });
       }
     } catch (error) {
-      // console.log("idが一致しない" + error);
+      // console.log(error);
     }
   })();
 
-  // コメント取得
+  // コメント表示
+  const [comments, setComments] = useState([]);
+  const fetchComment = async () => {
+    try {
+      const cmtCol = collection(db, "comments");
+      const cmtQueryRef = query(
+        cmtCol,
+        where("Id", "==", id),
+        orderBy("commentCreate", "desc")
+      );
+      getDocs(cmtQueryRef).then((cmtSnapShot) => {
+        const cmtObj = cmtSnapShot.docs.map((doc) => {
+          return {
+            commentName: doc.data().commentName,
+            commentDetail: doc.data().commentDetail,
+            commentCreate: format(
+              doc.data().commentCreate.toDate(),
+              "yyyy-MM-dd HH:mm"
+            ),
+          };
+        });
+        setComments(cmtObj);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchComment();
+  }, []);
 
   // コメント追加
   const addComment = async (e) => {
@@ -82,31 +105,28 @@ const Show = () => {
     try {
       const { commentName, commentDetail } = e.target.elements;
       const newComment = doc(collection(db, "comments"));
-      const comdetail = commentDetail.value; // 入力フィールドから値を取得
-      const comname = commentName.value; // 入力フィールドから値を取得
+      const comdetail = commentDetail.value;
+      const comname = commentName.value;
       await setDoc(newComment, {
         Id: id,
         commentCreate: Timestamp.now(),
-        commentDetail: comdetail, // 取得したコメント詳細を使用
+        commentDetail: comdetail,
         commentId: newComment.id,
-        commentName: comname, // 取得したコメント名を使用
+        commentName: comname,
       });
-      // フォームをクリア
-      commentName.value = ""; // コメント名フィールドをクリア
-      commentDetail.value = ""; // コメント詳細フィールドをクリア
-      // モーダル閉じる
+      commentName.value = "";
+      commentDetail.value = "";
       onClose();
-      // fetchComment();
     } catch (error) {
       console.log("コメント登録失敗" + error);
     }
   };
-
-  // モーダル開閉(chakra-ui オプション)
+  // モーダル
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
+      {/* コンテンツ */}
       <Box m="0 auto" maxW="1080px">
         {/* コンテンツ部分の最大幅と横の余白 */}
 
@@ -121,117 +141,138 @@ const Show = () => {
             textAlign="center"
             border="1px"
             borderColor="black"
-            onClick={onOpen}
           >
             Comment
           </Button>
           <BackButton />
         </Flex>
-      </Box>
 
-      {/* Todoリスト部分 */}
-      <Flex>
-        <Box
-          w="55%"
-          border="1px"
-          borderColor="gray"
-          p={2}
-          mr="20px"
-          borderRadius="10px"
-        >
-          <Box bg="#68D391">
-            <Text as="b">TITLE</Text>
-          </Box>
-          <Text mb="20px">{todos.Task}</Text>
-          <Box bg="#68D391">
-            <Text as="b">DETAIL</Text>
-          </Box>
-          <Text mb="20px">{todos.Detail}</Text>
-          <Flex mb="20px">
-            <Button
-              w="25%"
-              mr="30px"
-              bgColor="green.300"
-              rounded="full"
-              textAlign="center"
+        <Flex>
+          {/* Todoリスト部分 */}
+          <Flex>
+            <Box
+              w="55%"
               border="1px"
-              borderColor="black"
+              borderColor="gray"
+              p={2}
+              mr="20px"
+              borderRadius="10px"
             >
-              Edit
-              <EditIcon ml="2" />
-            </Button>
-            <Box w="35%">
-              <Text>Create</Text>
-              <Text>{todos.Create}</Text>
-            </Box>
-            <Box w="35%">
-              <Text>Update</Text>
-              <Text>{todos.Update}</Text>
-            </Box>
-          </Flex>
-        </Box>
-      </Flex>
-
-      {/* モーダル */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent
-          minWidth="none"
-          w="480px"
-          h="480px"
-          px={5}
-          py={5}
-          mt="120px"
-          border="1px"
-          borderColor="gray"
-          borderRadius="10px"
-        >
-          <Text fontSize="5xl" as="b">
-            Comment
-          </Text>
-          <Center>
-            <form onSubmit={addComment}>
-              <Box w="100%">
-                {/* 名前入力部分 */}
-                <FormControl mt="16px" mb="10px">
-                  <FormLabel>Name</FormLabel>
-                  <Input
-                    size="lg"
-                    id="commentName"
-                    name="commentName"
-                    type="commentName"
-                    placeholder="Name"
-                  />
-                </FormControl>
-                {/* コメント入力部分 */}
-                <FormControl marginBottom="16px">
-                  <FormLabel>Your Comment</FormLabel>
-                  <Textarea
-                    h="160px"
-                    resize="none"
-                    id="commentDetail"
-                    name="commentDetail"
-                    type="commentDetail"
-                    placeholder="Your Comment"
-                  />
-                </FormControl>
-                {/* Createボタン */}
+              <Box bg="#68D391">
+                <Text as="b">TITLE</Text>
+              </Box>
+              <Text mb="20px">{todos.Task}</Text>
+              <Box bg="#68D391">
+                <Text as="b">DETAIL</Text>
+              </Box>
+              <Text mb="20px">{todos.Detail}</Text>
+              <Flex mb="20px">
                 <Button
-                  bgColor="green.600"
-                  w="100%"
-                  color="white"
+                  w="25%"
+                  mr="30px"
+                  bgColor="green.300"
+                  rounded="full"
+                  textAlign="center"
                   border="1px"
                   borderColor="black"
-                  borderRadius="10px"
-                  type="submit"
                 >
-                  CREATE
+                  Edit
+                  <EditIcon ml="2" />
                 </Button>
+                <Box w="35%">
+                  <Text>Create</Text>
+                  <Text>{todos.Create}</Text>
+                </Box>
+                <Box w="35%">
+                  <Text>Update</Text>
+                  <Text>{todos.Update}</Text>
+                </Box>
+              </Flex>
+            </Box>
+          </Flex>
+          {/* コメント部分 */}
+          {comments.map((comment) => {
+            return (
+              <Box
+                mb="20px"
+                border="1px"
+                borderColor="gray"
+                w="45%"
+                borderRadius="5px"
+                key={comment.Id}
+              >
+                <Flex bgColor="green.600" color="white" p={2}>
+                  <Text>{comment.commentName}</Text>
+                  <Spacer />
+                  <Text>{comment.commentCreate}</Text>
+                </Flex>
+                <Text p={3}>{comment.commentDetail}</Text>
               </Box>
-            </form>
-          </Center>
-        </ModalContent>
-      </Modal>
+            );
+          })}
+        </Flex>
+
+        {/* モーダル */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent
+            minWidth="none"
+            w="480px"
+            h="480px"
+            px={5}
+            py={5}
+            mt="120px"
+            border="1px"
+            borderColor="gray"
+            borderRadius="10px"
+          >
+            <Text fontSize="5xl" as="b">
+              Comment
+            </Text>
+            <Center>
+              <form onSubmit={addComment} w="100%">
+                <Box>
+                  {/* 名前入力部分 */}
+                  <FormControl mt="16px" mb="10px">
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      size="lg"
+                      id="commentName"
+                      name="commentName"
+                      type="commentName"
+                      placeholder="Name"
+                    />
+                  </FormControl>
+                  {/* コメント入力部分 */}
+                  <FormControl marginBottom="16px">
+                    <FormLabel>Your Comment</FormLabel>
+                    <Textarea
+                      h="160px"
+                      resize="none"
+                      id="commentDetail"
+                      name="commentDetail"
+                      type="commentDetail"
+                      placeholder="Your Comment"
+                    />
+                  </FormControl>
+                  {/* Createボタン */}
+                  <Button
+                    bgColor="green.600"
+                    w="100%"
+                    color="white"
+                    border="1px"
+                    borderColor="black"
+                    borderRadius="10px"
+                    type="submit"
+                  >
+                    CREATE
+                  </Button>
+                </Box>
+              </form>
+            </Center>
+          </ModalContent>
+        </Modal>
+      </Box>
     </>
   );
 };
