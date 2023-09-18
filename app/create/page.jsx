@@ -1,6 +1,6 @@
 "use client";
 
-import { v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   Heading,
   Box,
@@ -15,8 +15,14 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { BackButton } from "../components/button/BackButton";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  setDoc,
+  doc,
+} from "firebase/firestore";
+import { BackButton } from "../../components/button/BackButton";
 import { useRouter } from "next/navigation";
 import db from "../../firebase";
 
@@ -40,15 +46,15 @@ export default function Create() {
 
   const handleSubmit = async () => {
     if (confirm("Todoリストを追加します。よろしいですか？")) {
+      const newId = uuidv4();
       try {
-        const collectionRef = collection(db, "posts");
-        const todo = await addDoc(collectionRef, {
+        await setDoc(doc(db, "posts", newId), {
           ...newTodo,
-          Id: uuidv4(),
+          Id: newId,
           Create: serverTimestamp(),
           Update: serverTimestamp(),
         });
-        console.log("todoが追加されました: ", todo);
+        console.log("todoが追加されました: ");
         setNewTodo(initialTodo);
         router.push("/top");
       } catch (error) {
