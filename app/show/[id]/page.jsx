@@ -129,131 +129,125 @@ const Show = () => {
             textAlign="center"
             border="1px"
             borderColor="black"
+            onClick={onOpen}
           >
             Comment
           </Button>
           <BackButton />
         </Flex>
 
+        {/* Todoリスト部分 */}
         <Flex>
-          {/* Todoリスト部分 */}
-          <Flex>
-            <Box w="55%" border="1px" borderColor="gray" p={2} mr="20px" borderRadius="10px">
-              <Box bg="#68D391">
-                <Text as="b">TITLE</Text>
+          <Box w="55%" border="1px" borderColor="gray" p={2} mr="20px" borderRadius="10px">
+            <Box bg="#68D391">
+              <Text as="b">TITLE</Text>
+            </Box>
+            <Text mb="20px">{todos.Task}</Text>
+            <Box bg="#68D391">
+              <Text as="b">DETAIL</Text>
+            </Box>
+            <Text mb="20px">{todos.Detail}</Text>
+            <Flex mb="20px">
+              <Button
+                w="25%"
+                mr="30px"
+                bgColor="green.300"
+                rounded="full"
+                textAlign="center"
+                border="1px"
+                borderColor="black"
+              >
+                Edit
+                <EditIcon ml="2" />
+              </Button>
+              <Box w="35%">
+                <Text>Create</Text>
+                <Text>{todos.Create}</Text>
               </Box>
-              <Text mb="20px">{todos.Task}</Text>
-              <Box bg="#68D391">
-                <Text as="b">DETAIL</Text>
+              <Box w="35%">
+                <Text>Update</Text>
+                <Text>{todos.Update}</Text>
               </Box>
-              <Text mb="20px">{todos.Detail}</Text>
-              <Flex mb="20px">
+            </Flex>
+          </Box>
+
+          {/* コメント部分 */}
+          <Box w="45%">
+            {comments.map((comment) => {
+              return (
+                <Box mb="20px" border="1px" borderColor="gray" borderRadius="5px" key={comment.Id}>
+                  <Flex bgColor="green.600" color="white" p={2}>
+                    <Text>{comment.commentName}</Text>
+                    <Spacer />
+                    <Text>{comment.commentCreate}</Text>
+                  </Flex>
+                  <Text p={3}>{comment.commentDetail}</Text>
+                </Box>
+              );
+            })}
+          </Box>
+        </Flex>
+      </Box>
+      {/* モーダル */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent
+          minWidth="none"
+          w="480px"
+          h="480px"
+          px={5}
+          py={5}
+          mt="120px"
+          border="1px"
+          borderColor="gray"
+          borderRadius="10px"
+        >
+          <Text fontSize="5xl" as="b">
+            Comment
+          </Text>
+          <Center>
+            <form onSubmit={addComment} w="100%">
+              <Box>
+                {/* 名前入力部分 */}
+                <FormControl mt="16px" mb="10px">
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    size="lg"
+                    id="commentName"
+                    name="commentName"
+                    type="commentName"
+                    placeholder="Name"
+                  />
+                </FormControl>
+                {/* コメント入力部分 */}
+                <FormControl marginBottom="16px">
+                  <FormLabel>Your Comment</FormLabel>
+                  <Textarea
+                    h="160px"
+                    resize="none"
+                    id="commentDetail"
+                    name="commentDetail"
+                    type="commentDetail"
+                    placeholder="Your Comment"
+                  />
+                </FormControl>
+                {/* Createボタン */}
                 <Button
-                  w="25%"
-                  mr="30px"
-                  bgColor="green.300"
-                  rounded="full"
-                  textAlign="center"
+                  bgColor="green.600"
+                  w="100%"
+                  color="white"
                   border="1px"
                   borderColor="black"
+                  borderRadius="10px"
+                  type="submit"
                 >
-                  Edit
-                  <EditIcon ml="2" />
+                  CREATE
                 </Button>
-                <Box w="35%">
-                  <Text>Create</Text>
-                  <Text>{todos.Create}</Text>
-                </Box>
-                <Box w="35%">
-                  <Text>Update</Text>
-                  <Text>{todos.Update}</Text>
-                </Box>
-              </Flex>
-            </Box>
-          </Flex>
-          {/* コメント部分 */}
-          {comments.map((comment) => {
-            return (
-              <Box
-                mb="20px"
-                border="1px"
-                borderColor="gray"
-                w="45%"
-                borderRadius="5px"
-                key={comment.Id}
-              >
-                <Flex bgColor="green.600" color="white" p={2}>
-                  <Text>{comment.commentName}</Text>
-                  <Spacer />
-                  <Text>{comment.commentCreate}</Text>
-                </Flex>
-                <Text p={3}>{comment.commentDetail}</Text>
               </Box>
-            );
-          })}
-        </Flex>
-
-        {/* モーダル */}
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent
-            minWidth="none"
-            w="480px"
-            h="480px"
-            px={5}
-            py={5}
-            mt="120px"
-            border="1px"
-            borderColor="gray"
-            borderRadius="10px"
-          >
-            <Text fontSize="5xl" as="b">
-              Comment
-            </Text>
-            <Center>
-              <form onSubmit={addComment} w="100%">
-                <Box>
-                  {/* 名前入力部分 */}
-                  <FormControl mt="16px" mb="10px">
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                      size="lg"
-                      id="commentName"
-                      name="commentName"
-                      type="commentName"
-                      placeholder="Name"
-                    />
-                  </FormControl>
-                  {/* コメント入力部分 */}
-                  <FormControl marginBottom="16px">
-                    <FormLabel>Your Comment</FormLabel>
-                    <Textarea
-                      h="160px"
-                      resize="none"
-                      id="commentDetail"
-                      name="commentDetail"
-                      type="commentDetail"
-                      placeholder="Your Comment"
-                    />
-                  </FormControl>
-                  {/* Createボタン */}
-                  <Button
-                    bgColor="green.600"
-                    w="100%"
-                    color="white"
-                    border="1px"
-                    borderColor="black"
-                    borderRadius="10px"
-                    type="submit"
-                  >
-                    CREATE
-                  </Button>
-                </Box>
-              </form>
-            </Center>
-          </ModalContent>
-        </Modal>
-      </Box>
+            </form>
+          </Center>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
