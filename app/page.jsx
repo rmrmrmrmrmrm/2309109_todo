@@ -1,11 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 const Home = () => {
-  const router = useRouter();
-  router.push(`/top`);
-  return <>複数issueの自動クローズテスト</>;
+  return <>git削除テスト巻き戻して修正を追加</>;
 };
 
 export default Home;
