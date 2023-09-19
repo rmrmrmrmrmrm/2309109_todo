@@ -39,9 +39,6 @@ const Show = () => {
   const pathname = usePathname();
   const segments = pathname.split("/");
   const id = segments[segments.length - 1];
-  if (id == "show") {
-    router.push(`/404`);
-  }
   // State
   const [todos, setTodos] = useState([]);
   const [comments, setComments] = useState([]);
@@ -51,7 +48,9 @@ const Show = () => {
   // Todoリスト
   const postsCol = collection(db, "posts");
   const queryRef = query(postsCol, where("Id", "==", id));
+
   const fetchData = async () => {
+    console.log("レンダリングチェックTODO");
     try {
       const querySnapshot = await getDocs(queryRef);
       const todoDocObj = querySnapshot.docs[0];
@@ -76,6 +75,7 @@ const Show = () => {
 
   // コメント表示
   const fetchComment = async () => {
+    console.log("レンダリングチェックCOMM");
     try {
       const cmtCol = collection(db, "comments");
       const cmtQueryRef = query(cmtCol, where("Id", "==", id), orderBy("commentCreate", "desc"));
@@ -120,8 +120,8 @@ const Show = () => {
     }
   };
 
-  const linkToEdit = () => {
-    router.push(`/edit/${id}`);
+  const linkToEdit = (Id) => {
+    router.push(`/edit/${Id}`);
   };
 
   return (
@@ -168,7 +168,9 @@ const Show = () => {
                 textAlign="center"
                 border="1px"
                 borderColor="black"
-                onClick={linkToEdit}
+                onClick={() => {
+                  linkToEdit(todos.Id);
+                }}
               >
                 Edit
                 <EditIcon ml="2" />
