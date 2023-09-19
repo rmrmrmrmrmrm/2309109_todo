@@ -32,6 +32,7 @@ import {
 import db from "../../../firebase";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Show = () => {
   // id
@@ -42,13 +43,14 @@ const Show = () => {
   const [todos, setTodos] = useState([]);
   const [comments, setComments] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
 
   // Todoリスト
   const postsCol = collection(db, "posts");
   const queryRef = query(postsCol, where("Id", "==", id));
 
   const fetchData = async () => {
-    console.log("レンダリングチェック");
+    console.log("レンダリングチェックTODO");
     try {
       const querySnapshot = await getDocs(queryRef);
       const todoDocObj = querySnapshot.docs[0];
@@ -64,7 +66,7 @@ const Show = () => {
         });
       }
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
   useEffect(() => {
@@ -73,6 +75,7 @@ const Show = () => {
 
   // コメント表示
   const fetchComment = async () => {
+    console.log("レンダリングチェックCOMM");
     try {
       const cmtCol = collection(db, "comments");
       const cmtQueryRef = query(cmtCol, where("Id", "==", id), orderBy("commentCreate", "desc"));
@@ -117,6 +120,10 @@ const Show = () => {
     }
   };
 
+  const linkToEdit = (Id) => {
+    router.push(`/edit/${Id}`);
+  };
+
   return (
     <>
       {/* コンテンツ */}
@@ -142,7 +149,7 @@ const Show = () => {
         </Flex>
 
         {/* Todoリスト部分 */}
-        <Flex>
+        <Flex align="flex-start">
           <Box w="55%" border="1px" borderColor="gray" p={2} mr="20px" borderRadius="10px">
             <Box bg="#68D391">
               <Text as="b">TITLE</Text>
@@ -161,6 +168,9 @@ const Show = () => {
                 textAlign="center"
                 border="1px"
                 borderColor="black"
+                onClick={() => {
+                  linkToEdit(todos.Id);
+                }}
               >
                 Edit
                 <EditIcon ml="2" />
@@ -181,10 +191,10 @@ const Show = () => {
             {comments.map((comment) => {
               return (
                 <Box mb="20px" border="1px" borderColor="gray" borderRadius="5px" key={comment.Id}>
-                  <Flex bgColor="green.600" color="white" p={2}>
+                  <Flex bgColor="green.600" color="white" px={3}>
                     <Text>{comment.commentName}</Text>
                     <Spacer />
-                    <Text>{comment.commentCreate}</Text>
+                    <Text textAlign="right">{comment.commentCreate}</Text>
                   </Flex>
                   <Text p={3}>{comment.commentDetail}</Text>
                 </Box>
@@ -211,7 +221,7 @@ const Show = () => {
             Comment
           </Text>
           <Center>
-            <form onSubmit={addComment} w="100%">
+            <form onSubmit={addComment} style={{ width: "100%" }}>
               <Box>
                 {/* 名前入力部分 */}
                 <FormControl mt="16px" mb="10px">
