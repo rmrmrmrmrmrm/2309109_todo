@@ -56,11 +56,6 @@ const Show = () => {
         const data = todoDocObj.data();
         const formattedCreate = format(data.Create.toDate(), "yyyy-MM-dd HH:mm");
         const formattedUpdate = format(data.Update.toDate(), "yyyy-MM-dd HH:mm");
-        // レンダリングのたびにstateを更新しているため、多くの回数APIを実行している
-        // Reactは基本的に以下のタイミングで再レンダリングされます。
-        // stateが更新された これ
-        // propsが更新された
-        // 親コンポーネントが再レンダリングされた
         setTodos({
           Create: formattedCreate,
           Detail: data.Detail,
@@ -74,7 +69,7 @@ const Show = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []); // 初回のみ実行
+  }, []);
 
   // コメント表示
   const fetchComment = async () => {
