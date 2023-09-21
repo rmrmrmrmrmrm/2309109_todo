@@ -1,21 +1,24 @@
-/** @type { import('@storybook/nextjs').StorybookConfig } */
-const config = {
-  stories: [
-    "../stories/**/*.mdx",
-    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-  ],
+module.exports = {
+  stories: ["../app/components/**/*.stories.js"],
+  staticDirs: ["../public"],
+
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-onboarding",
+    "@storybook/preset-create-react-app",
     "@storybook/addon-interactions",
   ],
+
+  features: {
+    postcss: false,
+  },
+
   framework: {
     name: "@storybook/nextjs",
     options: {},
   },
+
   docs: {
-    autodocs: "tag",
+    autodocs: true,
   },
 };
-export default config;
