@@ -24,6 +24,11 @@ export function AuthProvider({ children }) {
       // console.log(user);
       setUser(user);
       setLoading(false);
+      if (user) {
+        console.log("ログイン済");
+      } else {
+        console.log("ログアウト中");
+      }
     });
     return () => {
       unsubscribed();
@@ -33,10 +38,6 @@ export function AuthProvider({ children }) {
   if (loading) {
     return <p>loading...</p>;
   } else {
-    return (
-      <AuthContext.Provider value={value}>
-        {!loading && children}
-      </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
   }
 }

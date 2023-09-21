@@ -52,6 +52,7 @@ const Show = () => {
   const postsCol = collection(db, "posts");
   const queryRef = query(postsCol, where("Id", "==", id));
   const fetchData = async () => {
+    console.log("Todo取得");
     try {
       const querySnapshot = await getDocs(queryRef);
       const todoDocObj = querySnapshot.docs[0];
@@ -76,12 +77,14 @@ const Show = () => {
 
   // コメント表示
   const fetchComment = async () => {
+    console.log("コメント取得");
     try {
       const cmtCol = collection(db, "comments");
       const cmtQueryRef = query(cmtCol, where("Id", "==", id), orderBy("commentCreate", "desc"));
       getDocs(cmtQueryRef).then((cmtSnapShot) => {
         const cmtObj = cmtSnapShot.docs.map((doc) => {
           return {
+            commentId: doc.data().commentId,
             commentName: doc.data().commentName,
             commentDetail: doc.data().commentDetail,
             commentCreate: format(doc.data().commentCreate.toDate(), "yyyy-MM-dd HH:mm"),
@@ -148,8 +151,8 @@ const Show = () => {
           <BackButton />
         </Flex>
 
-        {/* Todoリスト部分 */}
         <Flex align="flex-start">
+          {/* Todoリスト部分 */}
           <Box w="55%" border="1px" borderColor="gray" p={2} mr="20px" borderRadius="10px">
             <Box bg="#68D391">
               <Text as="b">TITLE</Text>
@@ -188,7 +191,13 @@ const Show = () => {
           <Box w="45%">
             {comments.map((comment) => {
               return (
-                <Box mb="20px" border="1px" borderColor="gray" borderRadius="5px" key={comment.Id}>
+                <Box
+                  mb="20px"
+                  border="1px"
+                  borderColor="gray"
+                  borderRadius="5px"
+                  key={comment.commentId}
+                >
                   <Flex bgColor="green.600" color="white" px={3}>
                     <Text>{comment.commentName}</Text>
                     <Spacer />

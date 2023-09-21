@@ -9,6 +9,7 @@ const PrivateRoute = ({ children }) => {
 
   useEffect(() => {
     if (!user && pathname !== "/login" && pathname !== "/signup") {
+      console.log("リダイレクト");
       router.push("/login");
     }
   }, [pathname]);

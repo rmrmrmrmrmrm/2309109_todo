@@ -22,14 +22,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import db from "../../firebase";
 import { format } from "date-fns";
@@ -86,9 +79,12 @@ const Top = () => {
 
   return (
     <>
+      {/* 中身 */}
       <Box px={20} py={6}>
         <HStack mb={4}>
+          {/* 検索部分 */}
           <HStack spacing={2}>
+            {/* SEARCH部分 */}
             <FormControl>
               <FormLabel>SEARCH</FormLabel>
               <InputGroup size="sm">
@@ -98,6 +94,9 @@ const Top = () => {
                 <Input placeholder="タスクを検索" />
               </InputGroup>
             </FormControl>
+            {/* SEARCH部分 */}
+
+            {/* STATUS部分 */}
             <FormControl>
               <FormLabel>STATUS</FormLabel>
               <Select placeholder="状態を選択" size="sm">
@@ -105,6 +104,9 @@ const Top = () => {
                 <option>完了</option>
               </Select>
             </FormControl>
+            {/* STATUS部分 */}
+
+            {/* PRIORITY部分 */}
             <FormControl>
               <FormLabel>PRIORITY</FormLabel>
               <Select placeholder="重要度を選択" size="sm">
@@ -113,14 +115,21 @@ const Top = () => {
                 <option>低</option>
               </Select>
             </FormControl>
+            {/* PRIORITY部分 */}
+
+            {/* RESETボタン */}
             <Box>
               <Button variant="outline" colorScheme="gray" rounded="full">
                 RESET
               </Button>
             </Box>
+            {/* RESETボタン */}
           </HStack>
+          {/* 検索部分 */}
 
           <Spacer />
+
+          {/* createボタン */}
           <Box>
             <IconButton
               icon={<AddIcon />}
@@ -132,10 +141,14 @@ const Top = () => {
               Task作成
             </IconButton>
           </Box>
+          {/* createボタン */}
         </HStack>
+
+        {/* Todoリスト */}
         <TableContainer>
           <Table variant="simple">
             <Thead bgColor="green.300">
+              {/* Todoリストのタイトル */}
               <Tr>
                 <Th width="40%">Task</Th>
                 <Th width="12%">Status</Th>
@@ -144,29 +157,21 @@ const Top = () => {
                 <Th width="12%">Update</Th>
                 <Th width="12%">Action</Th>
               </Tr>
+              {/* Todoリストのタイトル */}
             </Thead>
+
+            {/* Todoリスト */}
             <Tbody>
-              {/* TODO: Taskデータをここにマップして表示：ここから */}
               {todos.map((todo) => {
                 return (
                   <Tr key={todo.Id}>
-                    {" "}
-                    {/* keyを設定 */}
                     <Td width="40%" p={1}>
-                      <Link
-                        href={`/show/${todo.Id}`}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <Link href={`/show/${todo.Id}`} style={{ cursor: "pointer" }}>
                         {todo.Task}
                       </Link>
                     </Td>
                     <Td width="12%" p={1}>
-                      <Button
-                        p={2}
-                        bgColor="green.100"
-                        rounded="full"
-                        textAlign="center"
-                      >
+                      <Button p={2} bgColor="green.100" rounded="full" textAlign="center">
                         DOING
                       </Button>
                     </Td>
@@ -204,12 +209,15 @@ const Top = () => {
                   </Tr>
                 );
               })}
-              {/* TODO: Taskデータをここにマップして表示：ここまで */}
             </Tbody>
-            {/* TODO: ページネーション機能 */}
+            {/* Todoリスト */}
+
+            {/* TODO: ページネーション機能挿入予定 */}
           </Table>
         </TableContainer>
+        {/* Todoリスト */}
       </Box>
+      {/* 中身 */}
     </>
   );
 };
